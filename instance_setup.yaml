@@ -1,0 +1,28 @@
+#cloud-config
+apt_preserve_sources_list: true
+apt_update: true
+
+packages:
+ - [unzip]
+ - [moreutils]
+ - [net-tools]
+ - [vim]
+
+ 
+package_upgrade: true
+
+write_files:
+ - path: /root/prepare-instance.sh
+   permissions: '0755'
+   content: |
+     IP=$(ifdata -e eth0 && ifdata -pa eth0)
+     echo ubuntu-server > /etc/hostname
+     sudo apt-get update
+     sudo apt-get -y install apache2
+     #Restarting apache2 Service
+     service apache2 restart
+     
+runcmd:
+ - [ '/bin/sh' , '/root/prepare-instance.sh' ]
+
+final_message: "The system is finally up, after $UPTIME seconds"
